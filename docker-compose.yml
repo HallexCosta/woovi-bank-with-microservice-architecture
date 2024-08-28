@@ -1,0 +1,36 @@
+services:
+  db01:
+    hostname: db01
+    container_name: db01
+    image: mongo
+    ports:
+      - 27017:27017
+    volumes:
+      - ./docker/mongodb:/data/db
+    environment:
+      # MONGO_INITDB_ROOT_USERNAME: root
+      # MONGO_INITDB_ROOT_PASSWORD: secret
+      MONGO_INITDB_DATABASE: woovi
+    networks:
+      - net
+
+  api01:
+    container_name: api01
+    hostname: api01
+    build:
+      context: .
+      dockerfile: dockerfiles/Dockerfile.api01
+    environment:
+      APP_PORT: ${APP_PORT}
+    ports:
+      - ${APP_PORT}:${APP_PORT}
+    volumes:
+      - ./src:/app/src
+    networks:
+      - net
+
+networks:
+  net:
+    driver: bridge
+    name: net
+    external: true
